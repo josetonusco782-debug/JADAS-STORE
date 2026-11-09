@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JADAS STORE — Sistema de Gestión Logística Unipersonal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+    .font-mono, .tabular-nums {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
+
+  <!-- ========================================== -->
+  <!-- 1. PANTALLA DE LOGIN (AUTENTICACIÓN)       -->
+  <!-- ========================================== -->
+  <div id="screen-login" class="min-h-screen flex items-center justify-center p-4 bg-slate-900">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+      <!-- Header del Login -->
+      <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-8 text-center text-white relative">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-400/20 text-sky-400 mb-4 shadow-inner">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-extrabold tracking-tight">JADAS STORE</h1>
+        <p class="text-xs uppercase tracking-widest text-sky-400 font-semibold mt-1">Gestión Logística Operativa</p>
+        <p class="text-xs text-slate-400 mt-2">Microempresa Unipersonal · Operada desde Vivienda</p>
+      </div>
+
+      <!-- Formulario Login -->
+      <div class="p-8 space-y-5">
+        <!-- Alerta de Error -->
+        <div id="login-alert" class="hidden p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm flex items-start gap-3">
+          <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <p class="font-semibold text-xs">Acceso denegado</p>
+            <p class="text-xs mt-0.5">Usuario o contraseña incorrectos. Usa las credenciales del Propietario.</p>
+          </div>
+        </div>
+
+        <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Usuario / Propietario</label>
+            <input type="text" id="login-username" required placeholder="ej: admin o jadas"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm transition-all" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Contraseña</label>
+            <div class="relative">
+              <input type="password" id="login-password" required placeholder="••••••••"
+                class="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm transition-all" />
+              <button type="button" onclick="togglePasswordVisibility()" aria-label="Mostrar u ocultar contraseña"
+                class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600">
+                <svg id="icon-eye-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg id="icon-eye-closed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit"
+            class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 text-white font-medium rounded-xl text-sm transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
+            Iniciar Sesión como Administrador
+          </button>
+        </form>
+
+        <!-- Botón Demo Rápido -->
+        <div class="pt-3 border-t border-slate-100 text-center">
+          <button onclick="fillDemoCredentials()" type="button"
+            class="text-xs text-sky-700 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg px-3 py-1.5 font-medium transition-colors">
+            ⚡ Autocompletar Credenciales (Demo: admin / jadas2024)
+          </button>
+        </div>
+
+        <div class="text-[11px] text-slate-600 text-center space-y-1">
+          <p class="font-medium">Marcos Teóricos Integrados:</p>
+          <p class="text-slate-600">Bowersox (Compras) · Anaya Tejero (Espacio) · Ballou (Stock & Salida)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. CONTENEDOR PRINCIPAL DE LA APLICACIÓN   -->
+  <!-- ========================================== -->
+  <div id="screen-app" class="hidden min-h-screen flex flex-col md:flex-row">
+    
+    <!-- Sidebar Navegación Lateral -->
+    <aside class="w-full md:w-64 bg-slate-900 text-white shrink-0 flex flex-col justify-between border-r border-slate-800">
+      <div>
+        <!-- Logo / Marca -->
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-sky-600 flex items-center justify-center text-white font-black text-sm">
+              JS
+            </div>
+            <div>
+              <span class="font-bold text-sm tracking-wide text-white block">JADAS STORE</span>
+              <span class="text-[10px] text-sky-400 block tracking-tight">Logística Unipersonal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perfil del Propietario -->
+        <div class="px-5 py-3.5 bg-slate-800/40 border-b border-slate-800/80 flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 text-xs font-semibold">
+            P
+          </div>
+          <div class="truncate text-xs">
+            <span class="block font-medium text-slate-200">Propietario Único</span>
+            <span class="text-[10px] text-emerald-400 font-mono">Sesión Activa</span>
+          </div>
+        </div>
+
+        <!-- Menú de Navegación -->
+        <nav class="p-3 space-y-1">
+          <button onclick="navigateTo('dashboard')" id="nav-dashboard"
+            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors bg-sky-600 text-white shadow-sm">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>Dashboard (Inicio)</span>
+          </button>
+
+          <button onclick="navigateTo('abastecimiento')" id="nav-abastecimiento"
+            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+            <svg class="w-4 h-4 shrink-0 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <div class="text-left">
+              <span>Abastecimiento</span>
+              <span class="block text-[10px] text-slate-400">Bowersox (Compras)</span>
+            </div>
+          </button>
+
+          <button onclick="navigateTo('inventario')" id="nav-inventario"
+            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+            <svg class="w-4 h-4 shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <div class="text-left">
+              <span>Almacén e Inventario</span>
+              <span class="block text-[10px] text-slate-400">Anaya & Ballou</span>
+            </div>
+          </button>
+
+          <button onclick="navigateTo('distribucion')" id="nav-distribucion"
+            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+            <svg class="w-4 h-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <div class="text-left">
+              <span>Distribución y Despacho</span>
+              <span class="block text-[10px] text-slate-400">Ballou (Picking)</span>
+            </div>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Pie del Sidebar / Cerrar Sesión -->
+      <div class="p-3 border-t border-slate-800 space-y-2">
+        <div class="px-3 py-2 rounded-lg bg-slate-800/40 text-[11px] text-slate-400">
+          <p class="font-medium text-slate-300">Vivienda JADAS</p>
+          <p class="text-[10px] text-slate-500">Zonificación doméstica activa</p>
+        </div>
+        <button onclick="handleLogout()"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/30 hover:text-rose-300 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Área de Contenido Principal -->
+    <main class="flex-1 bg-slate-50 min-h-screen flex flex-col overflow-x-hidden">
+      <!-- Barra Superior -->
+      <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
+        <div>
+          <h2 id="topbar-title" class="text-base font-bold text-slate-800">Panel Principal (Dashboard)</h2>
+          <p id="topbar-subtitle" class="text-xs text-slate-500">Monitoreo integral y control operativo de la microempresa</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Alerta de Stock Rápida -->
+          <div id="topbar-stock-badge" class="hidden items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs font-medium cursor-pointer" onclick="navigateTo('inventario')">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span id="topbar-stock-count">0</span> productos con stock bajo
+          </div>
+
+          <!-- Reset Datos Demo -->
+          <button onclick="resetDataConfirm()" title="Restablecer datos originales de prueba"
+            class="px-2.5 py-1.5 text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Restablecer Demo</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Banner de Alerta de Notificaciones -->
+      <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+      <!-- Vistas Modulares (SPA Containers) -->
+      <div class="p-6 flex-1 space-y-6">
+
+        <!-- ============================================== -->
+        <!-- SECCIÓN 1: DASHBOARD (INICIO)                  -->
+        <!-- ============================================== -->
+        <section id="view-dashboard" class="space-y-6">
+          
+          <!-- Banner Alerta Stock si hay productos bajos -->
+          <div id="dash-alert-stock" class="hidden p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-amber-900">Alerta de Existencias (Ronald H. Ballou)</h4>
+                <p class="text-xs text-amber-700" id="dash-alert-text">Existen artículos en o por debajo de su stock de seguridad en la vivienda.</p>
+              </div>
+            </div>
+            <button onclick="navigateTo('abastecimiento')" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-medium transition-colors">
+              Hacer Pedido de Compra
+            </button>
+          </div>
+
+          <!-- Tarjetas de Indicadores Rápidos (KPIs) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- KPI 1: Total Productos -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow transition-shadow">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Productos</span>
+                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-3">
+                <span id="kpi-total-products" class="text-3xl font-bold text-slate-900 font-mono tabular-nums">0</span>
+                <span class="text-xs text-slate-400 block mt-1">En catálogo activo</span>
+              </div>
+            </div>
+
+            <!-- KPI 2: Stock Bajo -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow transition-shadow cursor-pointer" onclick="navigateTo('inventario')">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Stock Bajo / Crítico</span>
+                <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-3">
+                <span id="kpi-low-stock" class="text-3xl font-bold text-rose-600 font-mono tabular-nums">0</span>
+                <span class="text-xs text-rose-500 block mt-1">≤ Stock mínimo (Revisar)</span>
+              </div>
+            </div>
+
+            <!-- KPI 3: Pedidos Clientes Pendientes -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow transition-shadow cursor-pointer" onclick="navigateTo('distribucion')">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Pedidos Pendientes</span>
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-3">
+                <span id="kpi-pending-orders" class="text-3xl font-bold text-emerald-600 font-mono tabular-nums">0</span>
+                <span class="text-xs text-slate-400 block mt-1">Por alistar o despachar</span>
+              </div>
+            </div>
+
+            <!-- KPI 4: Proveedores Registrados -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow transition-shadow cursor-pointer" onclick="navigateTo('abastecimiento')">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Proveedores</span>
+                <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-3">
+                <span id="kpi-suppliers-count" class="text-3xl font-bold text-slate-900 font-mono tabular-nums">0</span>
+                <span class="text-xs text-slate-400 block mt-1">Contactos comerciales</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Cuadro de Fundamentos Teóricos Logísticos para JADAS STORE -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-900 mb-1">Estructura Teórica y Operativa del Negocio</h3>
+            <p class="text-xs text-slate-500 mb-4">Adaptación de los 4 pilares de la logística comercial a un esquema unipersonal doméstico:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                  <span class="text-xs font-bold text-slate-800">1. Abastecimiento</span>
+                </div>
+                <p class="text-xs font-semibold text-sky-700">Bowersox, Closs y Cooper</p>
+                <p class="text-[11px] text-slate-600 mt-1">Gestión de relaciones con proveedores, tiempos de ciclo de compra y consolidación de pedidos.</p>
+              </div>
+
+              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span class="text-xs font-bold text-slate-800">2. Almacenamiento</span>
+                </div>
+                <p class="text-xs font-semibold text-amber-700">Julio Juan Anaya Tejero</p>
+                <p class="text-[11px] text-slate-600 mt-1">Zonificación física doméstica: optimización de espacios (cajas, percheros, vitrinas) sin almacén industrial.</p>
+              </div>
+
+              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span class="text-xs font-bold text-slate-800">3. Inventario</span>
+                </div>
+                <p class="text-xs font-semibold text-emerald-700">Ronald H. Ballou</p>
+                <p class="text-[11px] text-slate-600 mt-1">Puntos de reorden, stock de seguridad mínimo para evitar quiebres y control de rotación.</p>
+              </div>
+
+              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                  <span class="text-xs font-bold text-slate-800">4. Distribución</span>
+                </div>
+                <p class="text-xs font-semibold text-purple-700">Ronald H. Ballou</p>
+                <p class="text-[11px] text-slate-600 mt-1">Procesamiento de órdenes de clientes, hoja de picking en el hogar y actualización automática de stock.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dos Columnas: Pedidos Recientes & Productos con Stock Bajo -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Pedidos Recientes -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-bold text-slate-900">Últimos Pedidos de Clientes</h4>
+                <button onclick="navigateTo('distribucion')" class="text-xs text-sky-600 hover:text-sky-700 font-medium">Ver todos &rarr;</button>
+              </div>
+              <div id="dash-recent-orders-list" class="space-y-3">
+                <!-- Se llena con JS -->
+              </div>
+            </div>
+
+            <!-- Productos en Stock Bajo -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-bold text-slate-900">Atención: Stock en Nivel de Alerta</h4>
+                <button onclick="navigateTo('inventario')" class="text-xs text-sky-600 hover:text-sky-700 font-medium">Gestionar inventario &rarr;</button>
+              </div>
+              <div id="dash-low-stock-list" class="space-y-3">
+                <!-- Se llena con JS -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- SECCIÓN 2: ABASTECIMIENTO (BOWERSOX)           -->
+        <!-- ============================================== -->
+        <section id="view-abastecimiento" class="hidden space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Módulo de Abastecimiento</h3>
+              <p class="text-xs text-slate-500">Fundamentado en Bowersox, Closs y Cooper: Adquisición estratégica y gestión con proveedores</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openModalSupplier()"
+                class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-2 shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Nuevo Proveedor</span>
+              </button>
+              <button onclick="openModalPurchaseOrder()"
+                class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-2 shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span>Registrar Compra a Proveedor</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Directorio de Proveedores -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">Directorio de Proveedores Homologados</h4>
+                <p class="text-xs text-slate-500">Red de abastecimiento confiable para reposición de stock</p>
+              </div>
+              <span id="suppliers-badge-count" class="text-xs font-mono bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">0 registrados</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-5 py-3">Nombre Proveedor</th>
+                    <th class="px-5 py-3">Contacto & Teléfono</th>
+                    <th class="px-5 py-3">Ciudad</th>
+                    <th class="px-5 py-3">Categorías que Surte</th>
+                    <th class="px-5 py-3">Tiempo Entrega</th>
+                    <th class="px-5 py-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="suppliers-table-body" class="divide-y divide-slate-100">
+                  <!-- Llenado con JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tabla Histórica de Pedidos de Compra a Proveedores -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">Historial de Órdenes de Compra (Reabastecimiento)</h4>
+                <p class="text-xs text-slate-500">Trazabilidad de pedidos a proveedores con recepción automática en inventario</p>
+              </div>
+              <!-- Filtro de estado -->
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-500">Filtrar estado:</label>
+                <select id="filter-po-status" onchange="renderPurchaseOrders()" class="text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white">
+                  <option value="todos">Todos los Estados</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Recibido">Recibido</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-5 py-3">N° Orden</th>
+                    <th class="px-5 py-3">Proveedor</th>
+                    <th class="px-5 py-3">Fecha Pedido</th>
+                    <th class="px-5 py-3">Llegada Estimada</th>
+                    <th class="px-5 py-3">Ítems Solicitados</th>
+                    <th class="px-5 py-3">Costo Total</th>
+                    <th class="px-5 py-3">Estado</th>
+                    <th class="px-5 py-3 text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="po-table-body" class="divide-y divide-slate-100">
+                  <!-- Llenado con JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- SECCIÓN 3: ALMACENAMIENTO E INVENTARIO         -->
+        <!-- ============================================== -->
+        <section id="view-inventario" class="hidden space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Módulo de Almacenamiento e Inventario</h3>
+              <p class="text-xs text-slate-500">Integración Anaya Tejero (clasificación y ubicación en vivienda) & Ballou (control de existencias y stock mínimo)</p>
+            </div>
+            <button onclick="openModalProduct()"
+              class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-2 shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Registrar Nuevo Producto</span>
+            </button>
+          </div>
+
+          <!-- Filtros y Buscador de Productos -->
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+            <!-- Buscador -->
+            <div class="relative w-full md:w-80">
+              <input type="text" id="inv-search" oninput="renderProducts()" placeholder="Buscar por referencia, nombre o talla..."
+                class="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            <!-- Filtro Categoría -->
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              <select id="inv-filter-category" onchange="renderProducts()" class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white">
+                <option value="todas">Todas las Categorías</option>
+                <option value="Ropa">Ropa</option>
+                <option value="Zapatos">Zapatos</option>
+                <option value="Lociones">Lociones</option>
+                <option value="Gorras">Gorras</option>
+                <option value="Accesorios">Accesorios</option>
+              </select>
+
+              <!-- Filtro Ubicación Vivienda -->
+              <select id="inv-filter-location" onchange="renderProducts()" class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white">
+                <option value="todas">Todas las Ubicaciones en Casa</option>
+                <!-- Se llena con JS -->
+              </select>
+
+              <!-- Filtro Semáforo de Stock (Ballou) -->
+              <select id="inv-filter-stock" onchange="renderProducts()" class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white">
+                <option value="todos">Todos los Niveles de Stock</option>
+                <option value="alerta">En Alerta / Stock Bajo (≤ Mín)</option>
+                <option value="optimo">Nivel Óptimo (> Mín)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tabla de Inventario de Productos -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-5 py-3">Ref. / SKU</th>
+                    <th class="px-5 py-3">Producto & Categoría</th>
+                    <th class="px-5 py-3">Talla / Variante</th>
+                    <th class="px-5 py-3 bg-amber-50/50">Ubicación en Vivienda (Anaya)</th>
+                    <th class="px-5 py-3 text-center">Stock Actual</th>
+                    <th class="px-5 py-3 text-center">Stock Mínimo</th>
+                    <th class="px-5 py-3">Estado de Stock (Ballou)</th>
+                    <th class="px-5 py-3">Precio Venta</th>
+                    <th class="px-5 py-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="divide-y divide-slate-100">
+                  <!-- Llenado con JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- SECCIÓN 4: DISTRIBUCIÓN Y DESPACHO (BALLOU)    -->
+        <!-- ============================================== -->
+        <section id="view-distribucion" class="hidden space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Módulo de Distribución y Despacho</h3>
+              <p class="text-xs text-slate-500">Fundamentado en Ronald H. Ballou: Procesamiento de pedidos de clientes, hoja de picking en el hogar y actualización automática de stock</p>
+            </div>
+            <button onclick="openModalCustomerOrder()"
+              class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-2 shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Registrar Venta / Pedido de Cliente</span>
+            </button>
+          </div>
+
+          <!-- Métricas de Despacho -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <span class="text-xs text-slate-500 block">Registrados (Sin Iniciar)</span>
+              <span id="dist-count-registered" class="text-2xl font-bold text-slate-800 font-mono">0</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <span class="text-xs text-slate-500 block">En Preparación (Picking Doméstico)</span>
+              <span id="dist-count-prep" class="text-2xl font-bold text-amber-600 font-mono">0</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <span class="text-xs text-slate-500 block">Entregados (Stock Descontado)</span>
+              <span id="dist-count-delivered" class="text-2xl font-bold text-emerald-600 font-mono">0</span>
+            </div>
+          </div>
+
+          <!-- Tabla de Pedidos de Clientes -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">Listado de Pedidos y Entregas</h4>
+                <p class="text-xs text-slate-500">Haz clic en "Hoja de Picking" para ver en qué cuarto o mueble está cada producto</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-500">Filtrar:</label>
+                <select id="filter-customer-order-status" onchange="renderCustomerOrders()" class="text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white">
+                  <option value="todos">Todos los Estados</option>
+                  <option value="Registrado">Registrado</option>
+                  <option value="En Preparación">En Preparación</option>
+                  <option value="Entregado">Entregado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-5 py-3">N° Pedido</th>
+                    <th class="px-5 py-3">Cliente & Contacto</th>
+                    <th class="px-5 py-3">Destino / Modalidad</th>
+                    <th class="px-5 py-3">Ítems Solicitados</th>
+                    <th class="px-5 py-3">Monto Total</th>
+                    <th class="px-5 py-3">Estado</th>
+                    <th class="px-5 py-3 text-right">Hoja de Picking / Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="customer-orders-table-body" class="divide-y divide-slate-100">
+                  <!-- Llenado con JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODALES DE LA APLICACIÓN                       -->
+  <!-- ============================================== -->
+
+  <!-- MODAL: HOJA DE PREPARACIÓN (PICKING SHEET) EN VIVIENDA -->
+  <div id="modal-picking" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold">Hoja de Preparación y Picking Doméstico</h3>
+            <p class="text-[11px] text-slate-300">Ruta de recolección en vivienda · Teoría de Distribución (Ballou & Anaya)</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-picking')" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1">
+        <div class="p-3.5 bg-sky-50 border border-sky-200 rounded-xl flex items-center justify-between text-xs">
+          <div>
+            <span class="font-bold text-sky-900" id="picking-order-id">PED-XXXX</span>
+            <span class="text-sky-700 block mt-0.5" id="picking-customer-name">Cliente: Juan Pérez</span>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-sky-600 block uppercase font-semibold">Destino</span>
+            <span class="font-medium text-slate-800" id="picking-delivery-mode">Domicilio</span>
+          </div>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <div class="bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 uppercase tracking-wider border-b border-slate-200">
+            Artículos por Recolectar en la Casa (Ruta de Picking)
+          </div>
+          <div id="picking-items-container" class="divide-y divide-slate-100 p-2 space-y-1">
+            <!-- Llenado dinámico -->
+          </div>
+        </div>
+
+        <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-800">
+          💡 <strong>Guía para el propietario:</strong> Marca cada casilla al sacar el producto de su caja o estante. Al terminar el alistamiento, puedes cambiar el estado a "En Preparación" o "Entregado" para descontar el stock.
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+        <button onclick="closeModal('modal-picking')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-medium">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR / EDITAR PRODUCTO -->
+  <div id="modal-product" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 bg-slate-900 text-white flex items-center justify-between">
+        <h3 id="modal-product-title" class="text-sm font-bold">Registrar Producto en Inventario</h3>
+        <button onclick="closeModal('modal-product')" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+      <form id="form-product" onsubmit="handleSaveProduct(event)" class="p-6 space-y-4 overflow-y-auto">
+        <input type="hidden" id="prod-form-id">
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Referencia / SKU</label>
+            <input type="text" id="prod-reference" required placeholder="ej: JDS-ROP-004"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
+            <select id="prod-category" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
+              <option value="Ropa">Ropa</option>
+              <option value="Zapatos">Zapatos</option>
+              <option value="Lociones">Lociones</option>
+              <option value="Gorras">Gorras</option>
+              <option value="Accesorios">Accesorios</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo del Producto</label>
+          <input type="text" id="prod-name" required placeholder="ej: Camiseta Oversize Heavy Cotton"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Talla / Variante / Color</label>
+          <input type="text" id="prod-variant" required placeholder="ej: Talla M / Negro, 41 / Blanco, 100ml EDP"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <!-- Ubicación en Vivienda (Anaya Tejero) -->
+        <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl space-y-2">
+          <label class="block text-xs font-bold text-amber-900">Ubicación Exacta en la Vivienda (Anaya Tejero)</label>
+          <input type="text" id="prod-location" required placeholder="ej: Estante A (Habitación Principal), Vitrina (Sala), Caja 02"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+          <p class="text-[11px] text-amber-700">Permite al propietario ubicar el producto en segundos sin recorrer la vivienda al empacar.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad Actual</label>
+            <input type="number" id="prod-stock" min="0" required
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Stock Mínimo (Ballou)</label>
+            <input type="number" id="prod-min-stock" min="1" required
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Unitario (COP)</label>
+            <input type="number" id="prod-cost" min="0" required
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Precio Venta (COP)</label>
+            <input type="number" id="prod-price" min="0" required
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-product')" class="px-4 py-2 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs text-white bg-sky-600 hover:bg-sky-700 rounded-xl font-medium">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR / EDITAR PROVEEDOR -->
+  <div id="modal-supplier" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="p-5 bg-slate-900 text-white flex items-center justify-between">
+        <h3 id="modal-supplier-title" class="text-sm font-bold">Registrar Proveedor (Bowersox)</h3>
+        <button onclick="closeModal('modal-supplier')" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form id="form-supplier" onsubmit="handleSaveSupplier(event)" class="p-6 space-y-4">
+        <input type="hidden" id="sup-form-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Comercial / Empresa</label>
+          <input type="text" id="sup-name" required placeholder="ej: Distribuidora Textil Medellín"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Contacto Directo</label>
+            <input type="text" id="sup-contact" required placeholder="ej: Carlos Mario"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono / WhatsApp</label>
+            <input type="text" id="sup-phone" required placeholder="ej: +57 312 000 0000"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Ciudad</label>
+            <input type="text" id="sup-city" required placeholder="ej: Medellín, Bogotá, Cali"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Lead Time (Días)</label>
+            <input type="number" id="sup-leadtime" min="1" required value="3"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Categorías que Surte</label>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="sup-cat" value="Ropa"> Ropa</label>
+            <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="sup-cat" value="Zapatos"> Zapatos</label>
+            <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="sup-cat" value="Lociones"> Lociones</label>
+            <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="sup-cat" value="Gorras"> Gorras</label>
+            <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="sup-cat" value="Accesorios"> Accesorios</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Notas / Condiciones Comerciales</label>
+          <textarea id="sup-notes" rows="2" placeholder="Términos de pago, catálogo digital, pedidos mínimos..."
+            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+        </div>
+        <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-supplier')" class="px-4 py-2 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs text-white bg-slate-900 hover:bg-slate-800 rounded-xl font-medium">Guardar Proveedor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR COMPRA A PROVEEDOR (ORDEN DE ABASTECIMIENTO) -->
+  <div id="modal-po" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 bg-slate-900 text-white flex items-center justify-between">
+        <h3 class="text-sm font-bold">Nueva Orden de Compra a Proveedor</h3>
+        <button onclick="closeModal('modal-po')" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form id="form-po" onsubmit="handleSavePurchaseOrder(event)" class="p-6 space-y-4 overflow-y-auto">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Proveedor</label>
+          <select id="po-supplier" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
+            <!-- Se llena dinámicamente -->
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Producto a Reaprovisionar</label>
+          <select id="po-product" required onchange="handlePoProductChange()" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
+            <!-- Se llena dinámicamente -->
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad a Comprar</label>
+            <input type="number" id="po-quantity" min="1" value="10" required oninput="calculatePoTotal()"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Unitario (COP)</label>
+            <input type="number" id="po-unitcost" min="0" required oninput="calculatePoTotal()"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha Estimada de Llegada</label>
+            <input type="date" id="po-expecteddate" required
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Total Estimado</label>
+            <div id="po-total-display" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold text-slate-800 font-mono">
+              $ 0 COP
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Notas / Guía de Envío</label>
+          <textarea id="po-notes" rows="2" placeholder="Observaciones de transporte, flete o número de guía..."
+            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+        </div>
+        <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-po')" class="px-4 py-2 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs text-white bg-sky-600 hover:bg-sky-700 rounded-xl font-medium">Emitir Orden de Compra</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR PEDIDO DE CLIENTE FINAL (DISTRIBUCIÓN) -->
+  <div id="modal-customer-order" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 bg-slate-900 text-white flex items-center justify-between">
+        <h3 class="text-sm font-bold">Registrar Pedido de Cliente (Ballou)</h3>
+        <button onclick="closeModal('modal-customer-order')" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form id="form-customer-order" onsubmit="handleSaveCustomerOrder(event)" class="p-6 space-y-4 overflow-y-auto">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre del Cliente</label>
+            <input type="text" id="co-name" required placeholder="ej: Andrea Zapata"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono / WhatsApp</label>
+            <input type="text" id="co-phone" required placeholder="ej: +57 310 000 0000"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Modalidad de Entrega</label>
+            <select id="co-method" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
+              <option value="Domicilio">Domicilio con Mensajero</option>
+              <option value="Punto de Encuentro">Punto de Encuentro</option>
+              <option value="Retiro en Casa">Retiro Directo en Vivienda</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Dirección / Lugar de Entrega</label>
+            <input type="text" id="co-address" required placeholder="ej: Cra 70 # 32-15 Apto 301"
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+
+        <!-- Selección de Producto -->
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+          <label class="block text-xs font-bold text-slate-800">Producto a Despachar</label>
+          <select id="co-product" required onchange="handleCoProductChange()" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
+            <!-- Se llena dinámicamente -->
+          </select>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad a Vender</label>
+              <input type="number" id="co-qty" min="1" value="1" required oninput="calculateCoTotal()"
+                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Precio Unitario (COP)</label>
+              <input type="number" id="co-unitprice" min="0" required oninput="calculateCoTotal()"
+                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono">
+            </div>
+          </div>
+          <div id="co-stock-hint" class="text-[11px] text-slate-500">
+            <!-- Stock disponible -->
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Total a Cobrar</label>
+          <div id="co-total-display" class="px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-bold text-emerald-800 font-mono">
+            $ 0 COP
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Notas Especiales</label>
+          <input type="text" id="co-notes" placeholder="ej: Empaque para regalo, horario después de las 4pm..."
+            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-customer-order')" class="px-4 py-2 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs text-white bg-sky-600 hover:bg-sky-700 rounded-xl font-medium">Registrar Pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- LÓGICA JAVASCRIPT VANILLA & DATOS EN MEMORIA   -->
+  <!-- ============================================== -->
+  <script>
+    // --- DATOS SIMULADOS INICIALES (ARRAY DE OBJETOS) ---
+    const DEFAULT_PRODUCTS = [
+      { id: 'p1', reference: 'JDS-ROP-001', name: 'Camiseta Oversize Heavy Cotton "Urban Shadow"', category: 'Ropa', sizeOrVariant: 'Talla L / Negro Lavado', currentStock: 12, minStock: 4, homeLocation: 'Estante A (Habitación Principal - Nivel 2)', costPrice: 38000, salePrice: 75000 },
+      { id: 'p2', reference: 'JDS-ROP-002', name: 'Buzo Hoodie French Terry con Capucha', category: 'Ropa', sizeOrVariant: 'Talla M / Gris Jaspe', currentStock: 3, minStock: 4, homeLocation: 'Perchero Metálico (Habitación 2 - Derecha)', costPrice: 65000, salePrice: 125000 },
+      { id: 'p3', reference: 'JDS-ROP-003', name: 'Bermuda Cargo Dril Spandex con Bolsillos', category: 'Ropa', sizeOrVariant: 'Talla 32 / Beige Claro', currentStock: 8, minStock: 3, homeLocation: 'Estante A (Habitación Principal - Nivel 1)', costPrice: 42000, salePrice: 85000 },
+      { id: 'p4', reference: 'JDS-ZAP-001', name: 'Tenis Retro Sport Low White Edition', category: 'Zapatos', sizeOrVariant: 'Talla 41 / Blanco con Verde', currentStock: 2, minStock: 3, homeLocation: 'Caja Organizadora 01 (Bajo Cama)', costPrice: 110000, salePrice: 210000 },
+      { id: 'p5', reference: 'JDS-ZAP-002', name: 'Tenis Running Air Cushion Black Reflex', category: 'Zapatos', sizeOrVariant: 'Talla 40 / Negro Total', currentStock: 6, minStock: 2, homeLocation: 'Caja Organizadora 02 (Bajo Cama)', costPrice: 125000, salePrice: 235000 },
+      { id: 'p6', reference: 'JDS-LOC-001', name: 'Loción Sauvage Eau de Parfum 100ml', category: 'Lociones', sizeOrVariant: '100 ml / Frasco Sellado', currentStock: 1, minStock: 2, homeLocation: 'Vitrina de Cristal (Sala de Estar)', costPrice: 290000, salePrice: 430000 },
+      { id: 'p7', reference: 'JDS-LOC-002', name: 'Loción One Million Royal Parfum 100ml', category: 'Lociones', sizeOrVariant: '100 ml / Edición Gold', currentStock: 4, minStock: 2, homeLocation: 'Vitrina de Cristal (Sala de Estar)', costPrice: 275000, salePrice: 410000 },
+      { id: 'p8', reference: 'JDS-GOR-001', name: 'Gorra New Era NY Yankees 59FIFTY Curva', category: 'Gorras', sizeOrVariant: 'Snapback / Azul Marino', currentStock: 9, minStock: 4, homeLocation: 'Gavetero Plástico 3 (Pasillo - Gaveta 1)', costPrice: 35000, salePrice: 79000 },
+      { id: 'p9', reference: 'JDS-GOR-002', name: 'Gorra Trucker Los Angeles Malla Transpirable', category: 'Gorras', sizeOrVariant: 'Unitalla / Negro y Blanco', currentStock: 1, minStock: 3, homeLocation: 'Gavetero Plástico 3 (Pasillo - Gaveta 2)', costPrice: 28000, salePrice: 65000 },
+      { id: 'p10', reference: 'JDS-ACC-001', name: 'Cadena Acero Quirúrgico Eslabón Cubano 60cm', category: 'Accesorios', sizeOrVariant: '6mm / Plateado Brillante', currentStock: 7, minStock: 3, homeLocation: 'Joyero con Clave (Escritorio)', costPrice: 22000, salePrice: 55000 }
+    ];
+
+    const DEFAULT_SUPPLIERS = [
+      { id: 's1', name: 'Distribuidora Textil Medellín Moda', contactName: 'Carlos Mario Restrepo', phone: '+57 312 458 9921', city: 'Medellín', categories: ['Ropa'], deliveryLeadTimeDays: 4, notes: 'Camisetas oversize y bermudas.' },
+      { id: 's2', name: 'Importaciones Sneaker Lab Bogotá', contactName: 'Juliana Vargas', phone: '+57 320 891 3340', city: 'Bogotá', categories: ['Zapatos'], deliveryLeadTimeDays: 3, notes: 'Calzado deportivo urbano.' },
+      { id: 's3', name: 'Fragancias del Caribe Mayoristas', contactName: 'Andrés Felipe Gómez', phone: '+57 301 774 1255', city: 'Barranquilla', categories: ['Lociones'], deliveryLeadTimeDays: 5, notes: 'Perfumería 100% original.' },
+      { id: 's4', name: 'Caps & Street Culture Cali', contactName: 'Marlon Caicedo', phone: '+57 315 620 4819', city: 'Cali', categories: ['Gorras', 'Accesorios'], deliveryLeadTimeDays: 3, notes: 'Gorras y cadenas.' }
+    ];
+
+    const DEFAULT_PURCHASE_ORDERS = [
+      { id: 'OC-2024-001', supplierId: 's1', supplierName: 'Distribuidora Textil Medellín Moda', orderDate: '2024-10-25', expectedDate: '2024-10-29', status: 'Recibido', totalCost: 760000, productId: 'p1', productName: 'Camiseta Oversize Heavy Cotton', quantity: 20, unitCost: 38000 },
+      { id: 'OC-2024-002', supplierId: 's3', supplierName: 'Fragancias del Caribe Mayoristas', orderDate: '2024-11-06', expectedDate: '2024-11-11', status: 'Pendiente', totalCost: 580000, productId: 'p6', productName: 'Loción Sauvage EDP 100ml', quantity: 2, unitCost: 290000 }
+    ];
+
+    const DEFAULT_CUSTOMER_ORDERS = [
+      { id: 'PED-1021', customerName: 'Santiago Morales', customerPhone: '+57 318 902 4410', deliveryAddress: 'Calle 45 # 12-28, Apto 402', deliveryMethod: 'Domicilio', orderDate: '2024-11-06', status: 'Entregado', totalAmount: 160000, inventoryDeducted: true, items: [{ productId: 'p1', productReference: 'JDS-ROP-001', productName: 'Camiseta Oversize Heavy Cotton', sizeOrVariant: 'Talla L / Negro', homeLocation: 'Estante A (Habitación Principal - Nivel 2)', quantity: 1, unitPrice: 75000, picked: true }, { productId: 'p3', productReference: 'JDS-ROP-003', productName: 'Bermuda Cargo Dril Spandex', sizeOrVariant: 'Talla 32 / Beige', homeLocation: 'Estante A (Habitación Principal - Nivel 1)', quantity: 1, unitPrice: 85000, picked: true }] },
+      { id: 'PED-1022', customerName: 'Valentina Restrepo', customerPhone: '+57 314 552 1198', deliveryAddress: 'C.C. Santa Fe (Entrada)', deliveryMethod: 'Punto de Encuentro', orderDate: '2024-11-07', status: 'En Preparación', totalAmount: 509000, inventoryDeducted: false, items: [{ productId: 'p6', productReference: 'JDS-LOC-001', productName: 'Loción Sauvage EDP 100ml', sizeOrVariant: '100 ml / Sellado', homeLocation: 'Vitrina de Cristal (Sala de Estar)', quantity: 1, unitPrice: 430000, picked: true }, { productId: 'p8', productReference: 'JDS-GOR-001', productName: 'Gorra New Era NY Yankees', sizeOrVariant: 'Snapback / Azul', homeLocation: 'Gavetero Plástico 3 (Pasillo - Gaveta 1)', quantity: 1, unitPrice: 79000, picked: false }] },
+      { id: 'PED-1023', customerName: 'Mateo Osorio', customerPhone: '+57 302 443 6589', deliveryAddress: 'Retiro en vivienda', deliveryMethod: 'Retiro en Casa', orderDate: '2024-11-08', status: 'Registrado', totalAmount: 210000, inventoryDeducted: false, items: [{ productId: 'p4', productReference: 'JDS-ZAP-001', productName: 'Tenis Retro Sport Low White Edition', sizeOrVariant: 'Talla 41 / Blanco', homeLocation: 'Caja Organizadora 01 (Bajo Cama)', quantity: 1, unitPrice: 210000, picked: false }] }
+    ];
+
+    // --- ESTADO EN MEMORIA Y LOCALSTORAGE ---
+    let products = JSON.parse(localStorage.getItem('js_products')) || DEFAULT_PRODUCTS;
+    let suppliers = JSON.parse(localStorage.getItem('js_suppliers')) || DEFAULT_SUPPLIERS;
+    let purchaseOrders = JSON.parse(localStorage.getItem('js_purchase_orders')) || DEFAULT_PURCHASE_ORDERS;
+    let customerOrders = JSON.parse(localStorage.getItem('js_customer_orders')) || DEFAULT_CUSTOMER_ORDERS;
+
+    function saveState() {
+      localStorage.setItem('js_products', JSON.stringify(products));
+      localStorage.setItem('js_suppliers', JSON.stringify(suppliers));
+      localStorage.setItem('js_purchase_orders', JSON.stringify(purchaseOrders));
+      localStorage.setItem('js_customer_orders', JSON.stringify(customerOrders));
+      updateKpis();
+    }
+
+    function formatCOP(amount) {
+      return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bg = type === 'error' ? 'bg-rose-600' : type === 'warning' ? 'bg-amber-600' : 'bg-slate-900';
+      toast.className = `${bg} text-white text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transform transition-all duration-300 pointer-events-auto`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // --- AUTENTICACIÓN / LOGIN ---
+    function checkSession() {
+      const session = localStorage.getItem('js_session');
+      if (session) {
+        document.getElementById('screen-login').classList.add('hidden');
+        document.getElementById('screen-app').classList.remove('hidden');
+        updateKpis();
+        renderProducts();
+        renderSuppliers();
+        renderPurchaseOrders();
+        renderCustomerOrders();
+      } else {
+        document.getElementById('screen-login').classList.remove('hidden');
+        document.getElementById('screen-app').classList.add('hidden');
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const alertBox = document.getElementById('login-alert');
+
+      // Credenciales válidas para el propietario único: admin / jadas2024 (o jadas / admin123)
+      if ((user === 'admin' && pass === 'jadas2024') || (user === 'jadas' && pass === 'admin123') || (user === 'admin' && pass === 'admin')) {
+        alertBox.classList.add('hidden');
+        localStorage.setItem('js_session', JSON.stringify({ user, role: 'Propietario / Administrador' }));
+        showToast('¡Bienvenido a JADAS STORE!', 'success');
+        checkSession();
+      } else {
+        alertBox.classList.remove('hidden');
+      }
+    }
+
+    function fillDemoCredentials() {
+      document.getElementById('login-username').value = 'admin';
+      document.getElementById('login-password').value = 'jadas2024';
+      document.getElementById('login-alert').classList.add('hidden');
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('login-password');
+      const eyeOpen = document.getElementById('icon-eye-open');
+      const eyeClosed = document.getElementById('icon-eye-closed');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+      } else {
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('¿Deseas cerrar tu sesión como Propietario de JADAS STORE?')) {
+        localStorage.removeItem('js_session');
+        checkSession();
+      }
+    }
+
+    // --- NAVEGACIÓN SPA ENTRE PANTALLAS ---
+    function navigateTo(viewId) {
+      const views = ['dashboard', 'abastecimiento', 'inventario', 'distribucion'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        const btn = document.getElementById(`nav-${v}`);
+        if (v === viewId) {
+          el.classList.remove('hidden');
+          btn.classList.add('bg-sky-600', 'text-white');
+          btn.classList.remove('text-slate-300', 'hover:bg-slate-800');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('bg-sky-600', 'text-white');
+          btn.classList.add('text-slate-300', 'hover:bg-slate-800');
+        }
+      });
+
+      const titles = {
+        dashboard: ['Panel Principal (Dashboard)', 'Monitoreo integral y control operativo de la microempresa'],
+        abastecimiento: ['Módulo de Abastecimiento', 'Teoría de Bowersox, Closs y Cooper: Gestión de compras y relaciones con proveedores'],
+        inventario: ['Almacenamiento e Inventario', 'Teoría de Anaya Tejero (espacio en vivienda) y Ronald Ballou (control de existencias)'],
+        distribucion: ['Distribución y Despacho', 'Teoría de Ronald Ballou: Preparación de pedidos (picking en casa) y salida de mercancía']
+      };
+
+      document.getElementById('topbar-title').innerText = titles[viewId][0];
+      document.getElementById('topbar-subtitle').innerText = titles[viewId][1];
+
+      if (viewId === 'dashboard') updateKpis();
+      if (viewId === 'inventario') renderProducts();
+      if (viewId === 'abastecimiento') { renderSuppliers(); renderPurchaseOrders(); }
+      if (viewId === 'distribucion') renderCustomerOrders();
+    }
+
+    // --- ACTUALIZACIÓN DE KPIS Y DASHBOARD ---
+    function updateKpis() {
+      const totalProducts = products.length;
+      const lowStockProducts = products.filter(p => p.currentStock <= p.minStock);
+      const pendingOrders = customerOrders.filter(o => o.status === 'Registrado' || o.status === 'En Preparación');
+      const totalSuppliers = suppliers.length;
+
+      document.getElementById('kpi-total-products').innerText = totalProducts;
+      document.getElementById('kpi-low-stock').innerText = lowStockProducts.length;
+      document.getElementById('kpi-pending-orders').innerText = pendingOrders.length;
+      document.getElementById('kpi-suppliers-count').innerText = totalSuppliers;
+
+      // Alertas
+      const dashAlert = document.getElementById('dash-alert-stock');
+      const topBadge = document.getElementById('topbar-stock-badge');
+      const topCount = document.getElementById('topbar-stock-count');
+
+      if (lowStockProducts.length > 0) {
+        dashAlert.classList.remove('hidden');
+        topBadge.classList.remove('hidden');
+        topBadge.classList.add('flex');
+        topCount.innerText = lowStockProducts.length;
+        document.getElementById('dash-alert-text').innerText = `Hay ${lowStockProducts.length} producto(s) en nivel crítico o por debajo del stock mínimo.`;
+      } else {
+        dashAlert.classList.add('hidden');
+        topBadge.classList.add('hidden');
+        topBadge.classList.remove('flex');
+      }
+
+      // Listas de Dashboard
+      const recentOrdersEl = document.getElementById('dash-recent-orders-list');
+      recentOrdersEl.innerHTML = '';
+      customerOrders.slice(0, 4).forEach(o => {
+        const statusColors = {
+          'Registrado': 'text-slate-600 bg-slate-100',
+          'En Preparación': 'text-amber-700 bg-amber-50',
+          'Entregado': 'text-emerald-700 bg-emerald-50'
+        };
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 text-xs';
+        row.innerHTML = `
+          <div>
+            <span class="font-bold font-mono text-slate-800">${o.id}</span>
+            <span class="text-slate-600 ml-2">${o.customerName}</span>
+            <span class="block text-[11px] text-slate-600 mt-0.5">${o.items.length} ítem(s) · ${o.deliveryMethod}</span>
+          </div>
+          <div class="text-right">
+            <span class="font-mono font-bold text-slate-800 block">${formatCOP(o.totalAmount)}</span>
+            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${statusColors[o.status]}">${o.status}</span>
+          </div>
+        `;
+        recentOrdersEl.appendChild(row);
+      });
+
+      const lowStockEl = document.getElementById('dash-low-stock-list');
+      lowStockEl.innerHTML = '';
+      if (lowStockProducts.length === 0) {
+        lowStockEl.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">¡Excelente! Todo el inventario se encuentra por encima del stock de seguridad.</p>';
+      } else {
+        lowStockProducts.slice(0, 4).forEach(p => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between p-2.5 rounded-xl border border-rose-100 bg-rose-50/40 text-xs';
+          row.innerHTML = `
+            <div>
+              <span class="font-bold text-slate-800">${p.name}</span>
+              <span class="block text-[11px] text-slate-600 font-mono">${p.reference} · ${p.sizeOrVariant}</span>
+              <span class="block text-[10px] text-amber-700">📍 ${p.homeLocation}</span>
+            </div>
+            <div class="text-right">
+              <span class="font-mono font-bold text-rose-600 text-sm">${p.currentStock}</span>
+              <span class="text-[10px] text-slate-600 block">Mín: ${p.minStock}</span>
+            </div>
+          `;
+          lowStockEl.appendChild(row);
+        });
+      }
+    }
+
+    // --- MÓDULO 2: ALMACENAMIENTO E INVENTARIO ---
+    function renderProducts() {
+      const tbody = document.getElementById('inventory-table-body');
+      const search = document.getElementById('inv-search').value.toLowerCase();
+      const catFilter = document.getElementById('inv-filter-category').value;
+      const locFilter = document.getElementById('inv-filter-location').value;
+      const stockFilter = document.getElementById('inv-filter-stock').value;
+
+      // Actualizar select de ubicaciones si está vacío
+      const locSelect = document.getElementById('inv-filter-location');
+      const uniqueLocs = [...new Set(products.map(p => p.homeLocation))];
+      if (locSelect.options.length <= 1) {
+        uniqueLocs.forEach(loc => {
+          const opt = document.createElement('option');
+          opt.value = loc;
+          opt.innerText = loc;
+          locSelect.appendChild(opt);
+        });
+      }
+
+      const filtered = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(search) || p.reference.toLowerCase().includes(search) || p.sizeOrVariant.toLowerCase().includes(search);
+        const matchesCat = catFilter === 'todas' || p.category === catFilter;
+        const matchesLoc = locFilter === 'todas' || p.homeLocation === locFilter;
+        const matchesStock = stockFilter === 'todos' || (stockFilter === 'alerta' ? p.currentStock <= p.minStock : p.currentStock > p.minStock);
+        return matchesSearch && matchesCat && matchesLoc && matchesStock;
+      });
+
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="px-5 py-6 text-center text-slate-400">No se encontraron productos con los filtros seleccionados.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(p => {
+        const isCritical = p.currentStock <= 1;
+        const isLow = p.currentStock <= p.minStock;
+        
+        let stockBadge = '';
+        let stockColor = 'text-slate-800';
+
+        if (isCritical) {
+          stockBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700">Crítico / Reabastecer</span>';
+          stockColor = 'text-rose-600 font-bold';
+        } else if (isLow) {
+          stockBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-700">Stock Bajo (≤ Mín)</span>';
+          stockColor = 'text-amber-600 font-bold';
+        } else {
+          stockBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700">Óptimo</span>';
+          stockColor = 'text-emerald-700';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = isLow ? 'bg-amber-50/20 hover:bg-amber-50/40' : 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="px-5 py-3 font-mono font-medium text-slate-800">${p.reference}</td>
+          <td class="px-5 py-3">
+            <span class="font-bold text-slate-800 block">${p.name}</span>
+            <span class="text-[10px] text-slate-400 uppercase font-semibold">${p.category}</span>
+          </td>
+          <td class="px-5 py-3 text-slate-600">${p.sizeOrVariant}</td>
+          <td class="px-5 py-3 bg-amber-50/40 font-medium text-amber-900">
+            📍 ${p.homeLocation}
+          </td>
+          <td class="px-5 py-3 text-center font-mono ${stockColor} text-sm">${p.currentStock}</td>
+          <td class="px-5 py-3 text-center font-mono text-slate-500">${p.minStock}</td>
+          <td class="px-5 py-3">${stockBadge}</td>
+          <td class="px-5 py-3 font-mono text-slate-800 font-semibold">${formatCOP(p.salePrice)}</td>
+          <td class="px-5 py-3 text-right">
+            <div class="inline-flex items-center gap-1">
+              <button onclick="adjustStock('${p.id}', 1)" title="Sumar 1 unidad" class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center">+</button>
+              <button onclick="adjustStock('${p.id}', -1)" title="Restar 1 unidad" class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center">-</button>
+              <button onclick="openModalProduct('${p.id}')" title="Editar" class="px-2 py-1 text-sky-600 hover:text-sky-800 font-medium">Editar</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function adjustStock(productId, delta) {
+      const prod = products.find(p => p.id === productId);
+      if (!prod) return;
+      if (prod.currentStock + delta < 0) {
+        showToast('El stock no puede ser negativo', 'error');
+        return;
+      }
+      prod.currentStock += delta;
+      saveState();
+      renderProducts();
+      showToast(`Stock de "${prod.name}" ajustado a ${prod.currentStock} unidades.`);
+    }
+
+    function openModalProduct(productId = null) {
+      document.getElementById('modal-product').classList.remove('hidden');
+      const form = document.getElementById('form-product');
+      form.reset();
+      
+      if (productId) {
+        const prod = products.find(p => p.id === productId);
+        if (prod) {
+          document.getElementById('modal-product-title').innerText = 'Editar Producto de Inventario';
+          document.getElementById('prod-form-id').value = prod.id;
+          document.getElementById('prod-reference').value = prod.reference;
+          document.getElementById('prod-category').value = prod.category;
+          document.getElementById('prod-name').value = prod.name;
+          document.getElementById('prod-variant').value = prod.sizeOrVariant;
+          document.getElementById('prod-location').value = prod.homeLocation;
+          document.getElementById('prod-stock').value = prod.currentStock;
+          document.getElementById('prod-min-stock').value = prod.minStock;
+          document.getElementById('prod-cost').value = prod.costPrice;
+          document.getElementById('prod-price').value = prod.salePrice;
+        }
+      } else {
+        document.getElementById('modal-product-title').innerText = 'Registrar Nuevo Producto en Inventario';
+        document.getElementById('prod-form-id').value = '';
+        document.getElementById('prod-stock').value = 5;
+        document.getElementById('prod-min-stock').value = 3;
+      }
+    }
+
+    function handleSaveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('prod-form-id').value;
+      const reference = document.getElementById('prod-reference').value.trim();
+      const category = document.getElementById('prod-category').value;
+      const name = document.getElementById('prod-name').value.trim();
+      const sizeOrVariant = document.getElementById('prod-variant').value.trim();
+      const homeLocation = document.getElementById('prod-location').value.trim();
+      const currentStock = parseInt(document.getElementById('prod-stock').value, 10);
+      const minStock = parseInt(document.getElementById('prod-min-stock').value, 10);
+      const costPrice = parseFloat(document.getElementById('prod-cost').value);
+      const salePrice = parseFloat(document.getElementById('prod-price').value);
+
+      if (id) {
+        // Editar
+        const index = products.findIndex(p => p.id === id);
+        if (index !== -1) {
+          products[index] = { ...products[index], reference, category, name, sizeOrVariant, homeLocation, currentStock, minStock, costPrice, salePrice };
+          showToast('Producto actualizado exitosamente.');
+        }
+      } else {
+        // Nuevo
+        const newProduct = {
+          id: 'prod-' + Date.now(),
+          reference,
+          category,
+          name,
+          sizeOrVariant,
+          homeLocation,
+          currentStock,
+          minStock,
+          costPrice,
+          salePrice
+        };
+        products.push(newProduct);
+        showToast('Producto registrado exitosamente en el inventario.');
+      }
+
+      saveState();
+      closeModal('modal-product');
+      renderProducts();
+    }
+
+    // --- MÓDULO 1: ABASTECIMIENTO (BOWERSOX) ---
+    function renderSuppliers() {
+      const tbody = document.getElementById('suppliers-table-body');
+      tbody.innerHTML = '';
+      document.getElementById('suppliers-badge-count').innerText = `${suppliers.length} registrados`;
+
+      suppliers.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="px-5 py-3 font-semibold text-slate-800">${s.name}</td>
+          <td class="px-5 py-3 text-slate-600">${s.contactName} <span class="block text-slate-400 text-[10px]">${s.phone}</span></td>
+          <td class="px-5 py-3 text-slate-600">${s.city}</td>
+          <td class="px-5 py-3">
+            <span class="text-slate-700">${s.categories.join(', ')}</span>
+          </td>
+          <td class="px-5 py-3 font-mono text-slate-600">${s.deliveryLeadTimeDays} días</td>
+          <td class="px-5 py-3 text-right">
+            <button onclick="openModalSupplier('${s.id}')" class="text-sky-600 hover:text-sky-800 font-medium">Editar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openModalSupplier(supplierId = null) {
+      document.getElementById('modal-supplier').classList.remove('hidden');
+      const form = document.getElementById('form-supplier');
+      form.reset();
+
+      if (supplierId) {
+        const sup = suppliers.find(s => s.id === supplierId);
+        if (sup) {
+          document.getElementById('modal-supplier-title').innerText = 'Editar Proveedor';
+          document.getElementById('sup-form-id').value = sup.id;
+          document.getElementById('sup-name').value = sup.name;
+          document.getElementById('sup-contact').value = sup.contactName;
+          document.getElementById('sup-phone').value = sup.phone;
+          document.getElementById('sup-city').value = sup.city;
+          document.getElementById('sup-leadtime').value = sup.deliveryLeadTimeDays;
+          document.getElementById('sup-notes').value = sup.notes || '';
+          
+          document.querySelectorAll('input[name="sup-cat"]').forEach(chk => {
+            chk.checked = sup.categories.includes(chk.value);
+          });
+        }
+      } else {
+        document.getElementById('modal-supplier-title').innerText = 'Registrar Proveedor (Bowersox)';
+        document.getElementById('sup-form-id').value = '';
+      }
+    }
+
+    function handleSaveSupplier(e) {
+      e.preventDefault();
+      const id = document.getElementById('sup-form-id').value;
+      const name = document.getElementById('sup-name').value.trim();
+      const contactName = document.getElementById('sup-contact').value.trim();
+      const phone = document.getElementById('sup-phone').value.trim();
+      const city = document.getElementById('sup-city').value.trim();
+      const deliveryLeadTimeDays = parseInt(document.getElementById('sup-leadtime').value, 10);
+      const notes = document.getElementById('sup-notes').value.trim();
+
+      const categories = [];
+      document.querySelectorAll('input[name="sup-cat"]:checked').forEach(c => categories.push(c.value));
+      if (categories.length === 0) categories.push('Ropa');
+
+      if (id) {
+        const index = suppliers.findIndex(s => s.id === id);
+        if (index !== -1) {
+          suppliers[index] = { ...suppliers[index], name, contactName, phone, city, deliveryLeadTimeDays, categories, notes };
+          showToast('Proveedor actualizado.');
+        }
+      } else {
+        suppliers.push({
+          id: 'sup-' + Date.now(),
+          name, contactName, phone, city, deliveryLeadTimeDays, categories, notes
+        });
+        showToast('Proveedor añadido al directorio.');
+      }
+
+      saveState();
+      closeModal('modal-supplier');
+      renderSuppliers();
+    }
+
+    function renderPurchaseOrders() {
+      const tbody = document.getElementById('po-table-body');
+      const statusFilter = document.getElementById('filter-po-status').value;
+
+      const filtered = purchaseOrders.filter(po => statusFilter === 'todos' || po.status === statusFilter);
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="px-5 py-6 text-center text-slate-400">No hay órdenes de compra registradas.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(po => {
+        const isReceived = po.status === 'Recibido';
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="px-5 py-3 font-mono font-bold text-slate-800">${po.id}</td>
+          <td class="px-5 py-3 text-slate-800 font-medium">${po.supplierName}</td>
+          <td class="px-5 py-3 text-slate-500">${po.orderDate}</td>
+          <td class="px-5 py-3 text-slate-700 font-medium">${po.expectedDate}</td>
+          <td class="px-5 py-3 text-slate-700">${po.productName || 'Varios ítems'} (${po.quantity} uds)</td>
+          <td class="px-5 py-3 font-mono font-bold text-slate-800">${formatCOP(po.totalCost)}</td>
+          <td class="px-5 py-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${isReceived ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+              ${po.status}
+            </span>
+          </td>
+          <td class="px-5 py-3 text-right">
+            ${!isReceived ? `
+              <button onclick="receivePurchaseOrder('${po.id}')"
+                class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium transition-colors shadow-sm">
+                Recibir Mercancía (+Stock)
+              </button>
+            ` : `<span class="text-[11px] text-slate-400">Ingresado</span>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openModalPurchaseOrder() {
+      document.getElementById('modal-po').classList.remove('hidden');
+      const supSelect = document.getElementById('po-supplier');
+      const prodSelect = document.getElementById('po-product');
+      
+      supSelect.innerHTML = '';
+      suppliers.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.innerText = `${s.name} (${s.city})`;
+        supSelect.appendChild(opt);
+      });
+
+      prodSelect.innerHTML = '';
+      products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.innerText = `${p.name} - ${p.sizeOrVariant} (Stock actual: ${p.currentStock})`;
+        prodSelect.appendChild(opt);
+      });
+
+      handlePoProductChange();
+    }
+
+    function handlePoProductChange() {
+      const prodId = document.getElementById('po-product').value;
+      const prod = products.find(p => p.id === prodId);
+      if (prod) {
+        document.getElementById('po-unitcost').value = prod.costPrice;
+      }
+      calculatePoTotal();
+    }
+
+    function calculatePoTotal() {
+      const qty = parseInt(document.getElementById('po-quantity').value, 10) || 0;
+      const cost = parseFloat(document.getElementById('po-unitcost').value) || 0;
+      document.getElementById('po-total-display').innerText = formatCOP(qty * cost);
+    }
+
+    function handleSavePurchaseOrder(e) {
+      e.preventDefault();
+      const supId = document.getElementById('po-supplier').value;
+      const supplier = suppliers.find(s => s.id === supId);
+      const prodId = document.getElementById('po-product').value;
+      const prod = products.find(p => p.id === prodId);
+      const quantity = parseInt(document.getElementById('po-quantity').value, 10);
+      const unitCost = parseFloat(document.getElementById('po-unitcost').value);
+      const expectedDate = document.getElementById('po-expecteddate').value;
+      const notes = document.getElementById('po-notes').value.trim();
+
+      const newOrder = {
+        id: 'OC-2024-' + String(purchaseOrders.length + 1).padStart(3, '0'),
+        supplierId: supId,
+        supplierName: supplier ? supplier.name : 'Proveedor',
+        productId: prodId,
+        productName: prod ? prod.name : 'Producto',
+        quantity,
+        unitCost,
+        totalCost: quantity * unitCost,
+        orderDate: new Date().toISOString().split('T')[0],
+        expectedDate,
+        status: 'Pendiente',
+        notes
+      };
+
+      purchaseOrders.unshift(newOrder);
+      saveState();
+      closeModal('modal-po');
+      renderPurchaseOrders();
+      showToast(`Orden ${newOrder.id} registrada correctamente.`);
+    }
+
+    // Al recibir mercancía según Bowersox, se actualiza el stock automáticamente
+    function receivePurchaseOrder(orderId) {
+      const order = purchaseOrders.find(o => o.id === orderId);
+      if (!order || order.status === 'Recibido') return;
+
+      if (confirm(`¿Confirmas la recepción física del pedido ${order.id}? Se sumarán ${order.quantity} unidades al inventario general.`)) {
+        order.status = 'Recibido';
+        // Sumar al stock
+        if (order.productId) {
+          const prod = products.find(p => p.id === order.productId);
+          if (prod) {
+            prod.currentStock += order.quantity;
+          }
+        }
+        saveState();
+        renderPurchaseOrders();
+        renderProducts();
+        showToast(`Mercancía recibida. Se sumaron ${order.quantity} unidades a las existencias.`);
+      }
+    }
+
+    // --- MÓDULO 3: DISTRIBUCIÓN Y DESPACHO (BALLOU) ---
+    function renderCustomerOrders() {
+      const tbody = document.getElementById('customer-orders-table-body');
+      const statusFilter = document.getElementById('filter-customer-order-status').value;
+
+      const filtered = customerOrders.filter(o => statusFilter === 'todos' || o.status === statusFilter);
+      tbody.innerHTML = '';
+
+      // Contadores
+      document.getElementById('dist-count-registered').innerText = customerOrders.filter(o => o.status === 'Registrado').length;
+      document.getElementById('dist-count-prep').innerText = customerOrders.filter(o => o.status === 'En Preparación').length;
+      document.getElementById('dist-count-delivered').innerText = customerOrders.filter(o => o.status === 'Entregado').length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-6 text-center text-slate-400">No hay pedidos registrados con este filtro.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(o => {
+        const statusBadges = {
+          'Registrado': 'bg-slate-100 text-slate-700',
+          'En Preparación': 'bg-amber-100 text-amber-800',
+          'Entregado': 'bg-emerald-100 text-emerald-800'
+        };
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="px-5 py-3 font-mono font-bold text-slate-800">${o.id}</td>
+          <td class="px-5 py-3">
+            <span class="font-bold text-slate-800 block">${o.customerName}</span>
+            <span class="text-[11px] text-slate-600">${o.customerPhone}</span>
+          </td>
+          <td class="px-5 py-3">
+            <span class="text-xs text-slate-700 block">${o.deliveryAddress}</span>
+            <span class="text-[10px] text-sky-600 font-semibold">${o.deliveryMethod}</span>
+          </td>
+          <td class="px-5 py-3 text-slate-700 font-medium">
+            ${o.items.map(it => `${it.productName} (${it.quantity})`).join(', ')}
+          </td>
+          <td class="px-5 py-3 font-mono font-bold text-slate-800">${formatCOP(o.totalAmount)}</td>
+          <td class="px-5 py-3">
+            <select onchange="updateCustomerOrderStatus('${o.id}', this.value)" class="text-xs px-2 py-1 rounded-lg border border-slate-200 font-medium ${statusBadges[o.status]}">
+              <option value="Registrado" ${o.status === 'Registrado' ? 'selected' : ''}>Registrado</option>
+              <option value="En Preparación" ${o.status === 'En Preparación' ? 'selected' : ''}>En Preparación</option>
+              <option value="Entregado" ${o.status === 'Entregado' ? 'selected' : ''}>Entregado</option>
+            </select>
+          </td>
+          <td class="px-5 py-3 text-right">
+            <button onclick="openPickingSheet('${o.id}')"
+              class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium transition-colors inline-flex items-center gap-1.5 shadow-sm">
+              <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <span>Hoja de Picking</span>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openModalCustomerOrder() {
+      document.getElementById('modal-customer-order').classList.remove('hidden');
+      const prodSelect = document.getElementById('co-product');
+      prodSelect.innerHTML = '';
+
+      products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.innerText = `${p.name} - ${p.sizeOrVariant} (Stock: ${p.currentStock})`;
+        prodSelect.appendChild(opt);
+      });
+
+      handleCoProductChange();
+    }
+
+    function handleCoProductChange() {
+      const prodId = document.getElementById('co-product').value;
+      const prod = products.find(p => p.id === prodId);
+      if (prod) {
+        document.getElementById('co-unitprice').value = prod.salePrice;
+        document.getElementById('co-stock-hint').innerHTML = `
+          <span class="font-medium">📍 Ubicación en Vivienda:</span> ${prod.homeLocation} · <span class="font-medium">Stock Disponible:</span> ${prod.currentStock} uds.
+        `;
+      }
+      calculateCoTotal();
+    }
+
+    function calculateCoTotal() {
+      const qty = parseInt(document.getElementById('co-qty').value, 10) || 0;
+      const price = parseFloat(document.getElementById('co-unitprice').value) || 0;
+      document.getElementById('co-total-display').innerText = formatCOP(qty * price);
+    }
+
+    function handleSaveCustomerOrder(e) {
+      e.preventDefault();
+      const customerName = document.getElementById('co-name').value.trim();
+      const customerPhone = document.getElementById('co-phone').value.trim();
+      const deliveryMethod = document.getElementById('co-method').value;
+      const deliveryAddress = document.getElementById('co-address').value.trim();
+      const prodId = document.getElementById('co-product').value;
+      const prod = products.find(p => p.id === prodId);
+      const quantity = parseInt(document.getElementById('co-qty').value, 10);
+      const unitPrice = parseFloat(document.getElementById('co-unitprice').value);
+      const notes = document.getElementById('co-notes').value.trim();
+
+      if (!prod) return;
+      if (quantity > prod.currentStock) {
+        if (!confirm(`Advertencia de Ballou: El stock actual (${prod.currentStock}) es menor que la cantidad pedida (${quantity}). ¿Deseas registrarlo de todos modos?`)) {
+          return;
+        }
+      }
+
+      const newOrder = {
+        id: 'PED-' + (1020 + customerOrders.length + 1),
+        customerName,
+        customerPhone,
+        deliveryMethod,
+        deliveryAddress,
+        orderDate: new Date().toISOString().split('T')[0],
+        status: 'Registrado',
+        inventoryDeducted: false,
+        totalAmount: quantity * unitPrice,
+        notes,
+        items: [
+          {
+            productId: prod.id,
+            productReference: prod.reference,
+            productName: prod.name,
+            sizeOrVariant: prod.sizeOrVariant,
+            homeLocation: prod.homeLocation,
+            quantity,
+            unitPrice,
+            picked: false
+          }
+        ]
+      };
+
+      customerOrders.unshift(newOrder);
+      saveState();
+      closeModal('modal-customer-order');
+      renderCustomerOrders();
+      showToast(`Pedido ${newOrder.id} registrado para ${customerName}.`);
+    }
+
+    // Actualización de estado y descuento automático de inventario (Ballou)
+    function updateCustomerOrderStatus(orderId, newStatus) {
+      const order = customerOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const prevStatus = order.status;
+      order.status = newStatus;
+
+      // Si pasa a "Entregado" y no se ha descontado el stock
+      if (newStatus === 'Entregado' && !order.inventoryDeducted) {
+        order.items.forEach(item => {
+          const prod = products.find(p => p.id === item.productId);
+          if (prod) {
+            prod.currentStock = Math.max(0, prod.currentStock - item.quantity);
+          }
+        });
+        order.inventoryDeducted = true;
+        showToast(`Pedido ${order.id} entregado: Se descontaron las unidades del inventario.`);
+      }
+
+      // Si se revierte de "Entregado" a otro estado, devolvemos el stock
+      if (prevStatus === 'Entregado' && newStatus !== 'Entregado' && order.inventoryDeducted) {
+        order.items.forEach(item => {
+          const prod = products.find(p => p.id === item.productId);
+          if (prod) {
+            prod.currentStock += item.quantity;
+          }
+        });
+        order.inventoryDeducted = false;
+        showToast(`Stock reincorporado al cancelar entrega de ${order.id}.`, 'warning');
+      }
+
+      saveState();
+      renderCustomerOrders();
+      renderProducts();
+    }
+
+    // Hoja de Preparación (Picking) en Vivienda
+    function openPickingSheet(orderId) {
+      const order = customerOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      document.getElementById('modal-picking').classList.remove('hidden');
+      document.getElementById('picking-order-id').innerText = `${order.id} — ${order.orderDate}`;
+      document.getElementById('picking-customer-name').innerText = `Cliente: ${order.customerName} (${order.customerPhone})`;
+      document.getElementById('picking-delivery-mode').innerText = `${order.deliveryMethod} — ${order.deliveryAddress}`;
+
+      const container = document.getElementById('picking-items-container');
+      container.innerHTML = '';
+
+      order.items.forEach((item, idx) => {
+        const itemRow = document.createElement('div');
+        itemRow.className = 'p-3 bg-white rounded-lg border border-slate-100 flex items-start justify-between gap-3';
+        itemRow.innerHTML = `
+          <div class="flex items-start gap-3">
+            <input type="checkbox" id="pick-check-${idx}" ${item.picked ? 'checked' : ''} onchange="toggleItemPicked('${order.id}', ${idx})"
+              class="w-4 h-4 text-sky-600 rounded border-slate-300 mt-1 cursor-pointer">
+            <div>
+              <p class="font-bold text-xs text-slate-800">${item.productName}</p>
+              <p class="text-[11px] text-slate-500 font-mono">${item.productReference} · ${item.sizeOrVariant}</p>
+              <div class="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-semibold">
+                <span>📍 Ubicación en Casa:</span> ${item.homeLocation}
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs font-bold font-mono text-slate-800">${item.quantity} ud(s)</span>
+          </div>
+        `;
+        container.appendChild(itemRow);
+      });
+    }
+
+    function toggleItemPicked(orderId, itemIndex) {
+      const order = customerOrders.find(o => o.id === orderId);
+      if (!order || !order.items[itemIndex]) return;
+      order.items[itemIndex].picked = !order.items[itemIndex].picked;
+      saveState();
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function resetDataConfirm() {
+      if (confirm('¿Restablecer todos los datos originales de prueba de JADAS STORE?')) {
+        localStorage.clear();
+        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+        suppliers = JSON.parse(JSON.stringify(DEFAULT_SUPPLIERS));
+        purchaseOrders = JSON.parse(JSON.stringify(DEFAULT_PURCHASE_ORDERS));
+        customerOrders = JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_ORDERS));
+        localStorage.setItem('js_session', JSON.stringify({ user: 'admin', role: 'Propietario / Administrador' }));
+        saveState();
+        showToast('Datos de prueba restablecidos.');
+        location.reload();
+      }
+    }
+
+    // Inicializar al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+      checkSession();
+    });
+  </script>
+
+</body>
+</html>

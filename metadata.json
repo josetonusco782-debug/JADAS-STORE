@@ -1,0 +1,6 @@
+{
+  "name": "JADAS STORE — Sistema de Gestión Logística",
+  "description": "Sistema de gestión logística operativa para microempresa unipersonal con módulos de Abastecimiento (Bowersox), Almacenamiento (Anaya Tejero), Inventario (Ballou) y Distribución (Ballou).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

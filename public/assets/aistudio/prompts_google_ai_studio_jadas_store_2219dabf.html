@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompts para Google AI Studio - JADAS STORE</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #090d16;
+            --accent: #38bdf8;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .system-instruction-box {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .system-instruction-box h3 {
+            margin-top: 0;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prompt-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .prompt-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 0;
+        }
+
+        .prompt-tag {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .prompt-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: "Fira Code", Consolas, Monaco, monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .copy-btn.copied {
+            background-color: var(--success);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>JADAS STORE — Prompts para Google AI Studio</h1>
+        <p class="subtitle">Secuencia estructurada de prompts para la creación modular de la aplicación de gestión logística</p>
+    </header>
+
+    <div class="system-instruction-box">
+        <h3>💡 Configuración Inicial (System Instructions)</h3>
+        <p style="margin-bottom: 10px;">Antes de enviar los prompts a Google AI Studio, copia y pega el siguiente texto en el panel lateral de <strong>System Instructions</strong>:</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre>Eres un Arquitecto de Software y Desarrollador Full-Stack experto en UI/UX y logística operativa para microempresas. Tu tarea es generar código limpio, modular, moderno y totalmente funcional (Single Page Application en HTML5, Tailwind CSS y JavaScript Vanilla). La aplicación está diseñada para la microempresa JADAS STORE, operada por un único propietario desde su vivienda (sin empleados). Integra cuatro marcos teóricos fundamentales: Abastecimiento (Bowersox), Almacenamiento (Anaya Tejero), Inventario (Ballou) y Distribución (Ballou).</pre>
+        </div>
+    </div>
+
+    <!-- PANTALLA 0 -->
+    <div class="prompt-card">
+        <div class="prompt-header">
+            <h2 class="prompt-title">1. Pantalla Inicial y Autenticación (Login)</h2>
+            <span class="prompt-tag">Módulo Acceso</span>
+        </div>
+        <p class="prompt-desc">Genera la vista de inicio de sesión de usuario único (propietario) con persistencia de sesión local.</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar Prompt</button>
+            <pre>Actúa como Desarrollador Full-Stack UI/UX. Genera la pantalla inicial de inicio de sesión (Login) y la lógica de autenticación para la aplicación de JADAS STORE en HTML/JS con Tailwind CSS.
+
+Requerimientos:
+1. Interfaz moderna y responsiva con usuario y contraseña.
+2. Perfil único de acceso para el Propietario/Administrador (sin roles ni permisos adicionales).
+3. Lógica de validación: al ingresar credenciales válidas, simular acceso al sistema guardando sesión en localStorage y redirigir al panel principal.
+4. Botón con icono para "Mostrar/Ocultar contraseña".
+5. Mensaje de alerta intuitivo en caso de credenciales incorrectas.
+
+Entrégame la vista de Login perfectamente maquetada y lista para integrarse como la primera pantalla del sistema.</pre>
+        </div>
+    </div>
+
+    <!-- ESTRUCTURA BASE -->
+    <div class="prompt-card">
+        <div class="prompt-header">
+            <h2 class="prompt-title">2. Dashboard y Navegación Principal</h2>
+            <span class="prompt-tag">Estructura Base</span>
+        </div>
+        <p class="prompt-desc">Crea el contenedor global (Sidebar/Navbar) y el panel general con KPIs rápidos.</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar Prompt</button>
+            <pre>Actúa como Arquitecto de Software. Diseña la interfaz del Panel Principal (Dashboard) y el menú de navegación para JADAS STORE.
+
+Requerimientos:
+1. Menú lateral (Sidebar) o barra superior con acceso directo a:
+   - Dashboard (Inicio)
+   - Abastecimiento
+   - Almacenamiento e Inventario
+   - Distribución y Despacho
+   - Cerrar Sesión
+2. Tarjetas con indicadores rápidos (KPIs): Total Productos, Productos en Stock Bajo, Pedidos de Clientes Pendientes y Proveedores Registrados.
+3. El diseño debe adaptarse a pantallas móviles y computadores.</pre>
+        </div>
+    </div>
+
+    <!-- MODULO 1 -->
+    <div class="prompt-card">
+        <div class="prompt-header">
+            <h2 class="prompt-title">3. Módulo 1: Abastecimiento</h2>
+            <span class="prompt-tag">Bowersox, Closs y Cooper</span>
+        </div>
+        <p class="prompt-desc">Gestión de compras, catálogo de proveedores y registro de órdenes de compra.</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar Prompt</button>
+            <pre>Actúa como Desarrollador Frontend. Programa el Módulo de Abastecimiento para JADAS STORE aplicando la teoría de Bowersox, Closs y Cooper (gestión de compras y proveedores).
+
+Funcionalidades necesarias:
+1. Directorio de Proveedores: Formulario para añadir/editar proveedores (Nombre, Teléfono, Ciudad, Categorías que surte).
+2. Gestión de Pedidos a Proveedores: Formulario para registrar una nueva compra indicando Proveedor, Productos/Categorías solicitadas, Cantidad, Fecha estimada de llegada y Estado (Pendiente / Recibido).
+3. Tabla histórica con los pedidos de compra realizados.</pre>
+        </div>
+    </div>
+
+    <!-- MODULO 2 -->
+    <div class="prompt-card">
+        <div class="prompt-header">
+            <h2 class="prompt-title">4. Módulo 2: Almacenamiento e Inventario</h2>
+            <span class="prompt-tag">Anaya Tejero & Ronald Ballou</span>
+        </div>
+        <p class="prompt-desc">Clasificación, ubicación en la vivienda, control de existencias y alertas de stock mínimo.</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar Prompt</button>
+            <pre>Actúa como Desarrollador Full-Stack. Diseña el Módulo de Almacenamiento e Inventario unificado para JADAS STORE, basado en Julio Juan Anaya Tejero (clasificación y espacio) y Ronald H. Ballou (control de existencias).
+
+Funcionalidades necesarias:
+1. Registro de Productos: Categorías (Ropa, Zapatos, Lociones, Gorras, Accesorios), Referencia, Talla/Color, Cantidad Actual y Stock Mínimo.
+2. Asignación de Ubicación en Vivienda: Campo específico para registrar la ubicación exacta (ej: Estante A, Caja 2, Vitrina Exhibición).
+3. Buscador y Filtros: Filtrar productos por categoría o por ubicación dentro de la casa.
+4. Indicadores de Stock: Resaltar en rojo o amarillo los artículos que estén en o por debajo del stock mínimo.</pre>
+        </div>
+    </div>
+
+    <!-- MODULO 3 -->
+    <div class="prompt-card">
+        <div class="prompt-header">
+            <h2 class="prompt-title">5. Módulo 3: Distribución y Despacho</h2>
+            <span class="prompt-tag">Ronald H. Ballou</span>
+        </div>
+        <p class="prompt-desc">Gestión de pedidos de clientes finales, preparación (picking) y salida de inventario.</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar Prompt</button>
+            <pre>Actúa como Desarrollador Full-Stack. Construye el Módulo de Distribución y Despacho para JADAS STORE, aplicando la teoría de distribución de Ronald H. Ballou.
+
+Funcionalidades necesarias:
+1. Registro de Pedidos de Clientes: Formulario para capturar ventas/pedidos de clientes finales.
+2. Hoja de Preparación (Picking): Al registrar un pedido, la app debe indicar en qué parte de la vivienda se encuentran guardados los productos solicitados para que el propietario los ubique rápidamente.
+3. Actualización de Inventario: Al marcar un pedido como "Entregado", las unidades vendidas deben descontarse automáticamente del inventario general.
+4. Control de Estado: Estados del pedido (Registrado -> En Preparación -> Entregado).</pre>
+        </div>
+    </div>
+
+    <!-- UNIFICACION -->
+    <div class="prompt-card">
+        <div class="prompt-header">
+            <h2 class="prompt-title">6. Integración Total (Single Page Application)</h2>
+            <span class="prompt-tag">Código Final Integrado</span>
+        </div>
+        <p class="prompt-desc">Ensambla todas las pantallas y la lógica funcional dentro de un único archivo index.html.</p>
+        <div class="code-container">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar Prompt</button>
+            <pre>Actúa como Desarrollador Senior. Integra la pantalla de Login, el Dashboard y los 3 módulos logísticos (Abastecimiento, Almacenamiento/Inventario, Distribución) en UN SOLO ARCHIVO HTML completo (Single Page Application).
+
+Requerimientos del entregable:
+1. Usa Tailwind CSS mediante CDN para el diseño.
+2. Incluye JavaScript plano (Vanilla JS) para manejar el cambio de pantallas (Login -> Dashboard -> Módulos) mediante visibilidad CSS (clase 'hidden').
+3. Simula la base de datos utilizando array de objetos con datos de prueba realistas para JADAS STORE (ropa, calzado, lociones, etc.).
+4. Asegúrate de que los formularios permitan guardar nuevos datos temporalmente en la aplicación.
+5. Proporcióname el código ejecutable completo listo para guardar como `index.html` y abrir en cualquier navegador.</pre>
+        </div>
+    </div>
+
+    <footer>
+        <p>Proyecto Final de Gestión Logística — JADAS STORE | Documento preparado para desarrollo en Google AI Studio</p>
+    </footer>
+</div>
+
+<script>
+    function copyCode(button) {
+        const pre = button.nextElementSibling;
+        const text = pre.innerText;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            button.innerText = '¡Copiado!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.innerText = 'Copiar Prompt';
+                button.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            console.error('Error al copiar: ', err);
+        });
+    }
+</script>
+
+</body>
+</html>
